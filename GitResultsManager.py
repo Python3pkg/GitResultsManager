@@ -60,7 +60,7 @@ def makeAsync(fd):
 def readAsync(fd):
     try:
         return fd.read()
-    except IOError, err:
+    except IOError as err:
         if err.errno != errno.EAGAIN:
             raise err
         else:
@@ -177,8 +177,8 @@ def runCmd(args, supressErr = False):
     code = proc.wait()
 
     if code != 0 and not supressErr:
-        print out
-        print err
+        print(out)
+        print(err)
         raise Exception('Got error from running command with args ' + repr(args))
 
     return code, out, err
@@ -250,7 +250,7 @@ class GitResultsManager(object):
                 raise Exception('Tried to resume run from "%s", but it is not a results directory', self._resumeExistingRun)
 
             with open(os.path.join(self._resumeExistingRun, 'diary'), 'r') as diaryFile:
-                firstLine = diaryFile.next()
+                firstLine = next(diaryFile)
             ints = [int(xx) for xx in firstLine.split()[0].split('.')]
             year,month,day,hour,minute,second,ms = ints
 
@@ -259,7 +259,7 @@ class GitResultsManager(object):
             self.startProc = None
             self.diary = False   # External run, so it's not a diary we're managing
 
-            print 'grabbed time:', self.startWall
+            print('grabbed time:', self.startWall)
 
         else:
             self._resultsSubdir = resultsSubdir
@@ -325,22 +325,22 @@ class GitResultsManager(object):
         # print the command that was executed
         gitDisableWarning = 'WARNING: GitResultsManager running in GIT_DISABLED mode: no git information saved! (Is %s in a git repo?)' % os.getcwd()
         if not useGit:
-            print >>sys.stderr, gitDisableWarning
-        print '  Logging directory:', self.rundir
-        print '        Command run:', ' '.join(sys.argv)
-        print '           Hostname:', hostname()
-        print '  Working directory:', os.getcwd()
+            print(gitDisableWarning, file=sys.stderr)
+        print('  Logging directory:', self.rundir)
+        print('        Command run:', ' '.join(sys.argv))
+        print('           Hostname:', hostname())
+        print('  Working directory:', os.getcwd())
         if not self.diary:
-            print '<diary not saved>'
+            print('<diary not saved>')
             # just log these three lines
             with open(os.path.join(self.rundir, 'diary'), 'w') as ff:
                 if not useGit:
-                    print >>ff, gitDisableWarning
-                print >>ff, '  Logging directory:', self.rundir
-                print >>ff, '        Command run:', ' '.join(sys.argv)
-                print >>ff, '           Hostname:', hostname()
-                print >>ff, '  Working directory:', os.getcwd()
-                print >>ff, '<diary not saved>'
+                    print(gitDisableWarning, file=ff)
+                print('  Logging directory:', self.rundir, file=ff)
+                print('        Command run:', ' '.join(sys.argv), file=ff)
+                print('           Hostname:', hostname(), file=ff)
+                print('  Working directory:', os.getcwd(), file=ff)
+                print('<diary not saved>', file=ff)
 
         if useGit:
             with open(os.path.join(self.rundir, 'gitinfo'), 'w') as ff:
@@ -362,13 +362,13 @@ class GitResultsManager(object):
         if not self.diary:
             # just log these couple lines before resetting our name
             with open(os.path.join(self.rundir, 'diary'), 'a') as ff:
-                print >>ff, '       Wall time: ', fmtSeconds(time.time() - self.startWall)
+                print('       Wall time: ', fmtSeconds(time.time() - self.startWall), file=ff)
                 if procTime:
-                    print >>ff, '  Processor time: ', procTimeSec
+                    print('  Processor time: ', procTimeSec, file=ff)
         self._name = None
-        print '       Wall time: ', fmtSeconds(time.time() - self.startWall)
+        print('       Wall time: ', fmtSeconds(time.time() - self.startWall))
         if procTime:
-            print '  Processor time: ', procTimeSec
+            print('  Processor time: ', procTimeSec)
         if self.diary:
             self._outLogger.finishCapture()
             self._outLogger = None
@@ -594,7 +594,7 @@ class AsyncProcess(object):
             if self._exitstatus is None:
                 _killer(self.pid(), _sigkill)
         else:
-            print >>sys.stderr, 'Process object was never created. Maybe the program does not exist?'
+            print('Process object was never created. Maybe the program does not exist?', file=sys.stderr)
 
     def pid(self):
         """Return the process id of the process.
@@ -853,7 +853,7 @@ class ProcessManager(object):
         """
         # Since reap() modifies __procs, we have to iterate over a copy
         # of the keys in it.  Thus, do not remove the .keys() call.
-        for procid in self.__procs.keys():
+        for procid in list(self.__procs.keys()):
             self.reap(procid)
 
 ######################
@@ -863,12 +863,12 @@ class ProcessManager(object):
 
 
 if __name__ == '__main__':
-    print 'This is just a simple demo. See the examples directory in the GitResultsManager distribution for more detailed examples.'
+    print('This is just a simple demo. See the examples directory in the GitResultsManager distribution for more detailed examples.')
 
     resman.start()
-    print 'this is being logged to the %s directory' % resman.rundir
+    print('this is being logged to the %s directory' % resman.rundir)
     time.sleep(1)
-    print 'this is being logged to the %s directory' % resman.rundir
+    print('this is being logged to the %s directory' % resman.rundir)
     time.sleep(1)
-    print 'this is being logged to the %s directory' % resman.rundir
+    print('this is being logged to the %s directory' % resman.rundir)
     resman.stop()

@@ -17,12 +17,12 @@ setup(name='GitResultsManager',
       )
 
 
-print
-print '*' * 70
-print '''*  Note: GitResultsManager comes with several very useful scripts'''
-print '''*  (resman, resman-td, git-recreate) which are not installed by'''
-print '''*    pip install GitResultsManager'''
-print '''*  To install these scripts, simply run the one line command from:'''
-print '''*    %s''' % url
-print '*' * 70
-print
+print()
+print('*' * 70)
+print('''*  Note: GitResultsManager comes with several very useful scripts''')
+print('''*  (resman, resman-td, git-recreate) which are not installed by''')
+print('''*    pip install GitResultsManager''')
+print('''*  To install these scripts, simply run the one line command from:''')
+print('''*    %s''' % url)
+print('*' * 70)
+print()
